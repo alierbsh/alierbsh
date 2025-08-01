@@ -1,16 +1,30 @@
-## Hi there 👋
+# Hi, I'm Ali Erbas
 
-<!--
-**alierbsh/alierbsh** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+ A driven Computer Engineering student focused on Artificial Intelligence.  
+I'm building my future around AI.
 
-Here are some ideas to get you started:
+---
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+## 🚀 Areas of Focus
+
+🔹 **Programming & Algorithms** – Strong foundation from basics to advanced  
+🔹 **AI Development** – Hands-on with modern AI tools and frameworks  
+🔹 **Machine Learning** – Deep dive into the **mathematical backbone** that truly matters  
+🔹 **Deployment** – Bringing AI models into the real world
+
+---
+
+## 📡 My Vision
+
+I actively follow all major developments in the AI field with a bold long-term goal,  
+and I’m constantly shaping my portfolio to reflect this journey.
+
+---
+
+## 📫 Contact Me
+
+- 📧 Email: [aarbashh@gmail.com](mailto:aarbashh@gmail.com)  
+- 💼 LinkedIn: [linkedin.com/in/ali-erbaş-336314203](https://www.linkedin.com/in/ali-erbaş-336314203)
+
+
+42
