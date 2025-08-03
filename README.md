@@ -7,10 +7,10 @@ I'm building my future around AI.
 
 ## 🚀 Areas of Focus
 
-🔹 **Programming & Algorithms** – Strong foundation from basics to advanced  
-🔹 **AI Development** – Hands-on with modern AI tools and frameworks  
-🔹 **Machine Learning** – Deep dive into the **mathematical backbone** that truly matters  
-🔹 **Deployment** – Bringing AI models into the real world
+🔹 Programming & Algorithms – Strong foundation from basics to advanced  
+🔹 AI Development – Hands-on with modern AI tools and frameworks  
+🔹 Machine Learning – Deep dive into the **mathematical backbone** that truly matters  
+🔹 Deployment Bringing AI models into the real world
 
 ---
 
@@ -18,7 +18,7 @@ I'm building my future around AI.
 
 I actively follow all major developments in the AI field with a bold long-term goal,  
 and I’m constantly shaping my portfolio to reflect this journey.
-
+I want to be an engineer whos big O is O(n)
 ---
 
 ## 📫 Contact Me
@@ -28,3 +28,4 @@ and I’m constantly shaping my portfolio to reflect this journey.
 
 
 42
+
