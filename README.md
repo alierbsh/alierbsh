@@ -18,7 +18,7 @@ I'm building my future around AI.
 
 I actively follow all major developments in the AI field with a bold long-term goal,  
 and I’m constantly shaping my portfolio to reflect this journey.
-I want to be an engineer whos big O is O(n)
+I want to be an engineer whos big O is O(1)
 ---
 
 ## 📫 Contact Me
