@@ -29,26 +29,17 @@ I want to be an engineer whos big O is O(1)
 
 42
 
-### 🛠️ Languages and Tools : In the future, i will expend here.
+### 🛠️ Languages and Tools
 
-<p>
-  <!-- Python -->
+<p align="left">
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" 
        alt="Python" width="50" height="50"/>
-  
-  <!-- Adobe Premiere Pro -->
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/premierepro/premierepro-original.svg" 
        alt="Premiere Pro" width="50" height="50"/>
-  
-  <!-- C -->
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg" 
        alt="C" width="50" height="50"/>
-  
-  <!-- Git -->
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" 
        alt="Git" width="50" height="50"/>
-  
-  <!-- Linux -->
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" 
        alt="Linux" width="50" height="50"/>
 </p>
