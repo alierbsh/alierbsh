@@ -35,6 +35,7 @@ I want to fight for brighter future for humanity. Ai is my starting area. I thin
 42
 
 ### 🛠️ Languages and Tools Showcase Currently 
+(I am gonna expand here a lot)
 
 <p align="left">
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" 
