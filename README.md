@@ -5,20 +5,25 @@ I'm building my future around AI.
 
 ---
 
-## 🚀 Areas of Focus
+## 🚀 Areas of Focus  
 
-🔹 Programming & Algorithms – Strong foundation from basics to advanced  
-🔹 AI Development – Hands-on with modern AI tools and frameworks  
-🔹 Machine Learning – Deep dive into the **mathematical backbone** that truly matters  
-🔹 Deployment - Bringing AI models into the real world
+🔹 **Engineering Science** –  
+Solid understanding of the **engineering fundamentals**.  
+
+🔹 **Core Computer Science** –  
+Mastery of the **core principles of computer science**.  
+
+🔹 **Tools & Deployment** –  
+Proficiency with **modern software tools and deployment practices**.  
+
+🔹 **AI & Mathematical Foundations** –  
+Deep expertise in **artificial intelligence with a strong mathematical backbone**.  
 
 ---
 
 ## 📡 My Vision
 
-I actively follow all major developments in the AI field with a bold long-term goal,  
-and I’m constantly shaping my portfolio to reflect this journey.
-I want to be an engineer whos big O is O(1)
+I want to fight for brighter future for humanity. Ai is my starting area. I think thats good.
 ---
 
 ## 📫 Contact Me
@@ -29,7 +34,7 @@ I want to be an engineer whos big O is O(1)
 
 42
 
-### 🛠️ Languages and Tools
+### 🛠️ Languages and Tools Showcase Currently 
 
 <p align="left">
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" 
