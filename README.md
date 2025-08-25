@@ -5,7 +5,7 @@ I'm building my future around AI.
 
 ---
 
-## 🚀 Areas of Focus  
+## 🚀 Current Areas of Focus  
 
 🔹 **Engineering Science** –  
 Solid understanding of the **engineering fundamentals**.  
