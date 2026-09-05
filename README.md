@@ -5,7 +5,9 @@
 
 </div>
 
-**I AM ALI AND I BASICALLY TRY TO BUILD USEFUL THINGS - COMPUTER SCIENCE STUDENT**
+<h2 align="center">Hi, i am Ali</h2>
+<h3 align="center">i basically try to build useful things</h3>
+<h4 align="center">Computer Science Student</h4>
 
 **Here are a few things that might be useful:**
 

@@ -1,5 +1,19 @@
 {
-  "bio": "I AM ALI AND I BASICALLY TRY TO BUILD USEFUL THINGS - COMPUTER SCIENCE STUDENT",
+  "bio_align": "center",
+  "bio": [
+    {
+      "text": "Hi, i am Ali",
+      "level": 2
+    },
+    {
+      "text": "i basically try to build useful things",
+      "level": 3
+    },
+    {
+      "text": "Computer Science Student",
+      "level": 4
+    }
+  ],
   "intro": "Here are a few things that might be useful:",
   "projects": [
     {
