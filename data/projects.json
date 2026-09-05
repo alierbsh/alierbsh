@@ -1,7 +1,9 @@
 {
+  "bio": "I AM ALI AND I BASICALLY TRY TO BUILD USEFUL THINGS - COMPUTER SCIENCE STUDENT",
   "intro": "Here are a few things that might be useful:",
   "projects": [
     {
+      "emoji": "🔭",
       "name": "Curious Tube",
       "url": "https://chromewebstore.google.com/detail/curioustube/ijmemoebckcpddgmlanbljlpjmjfgjpl",
       "description": "Watch what you're curious about, not the algorithm's dictate."

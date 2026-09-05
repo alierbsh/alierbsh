@@ -5,6 +5,8 @@
 
 </div>
 
-Here are a few things that might be useful:
+**I AM ALI AND I BASICALLY TRY TO BUILD USEFUL THINGS - COMPUTER SCIENCE STUDENT**
 
-- [Curious Tube](https://chromewebstore.google.com/detail/curioustube/ijmemoebckcpddgmlanbljlpjmjfgjpl) — Watch what you're curious about, not the algorithm's dictate.
+**Here are a few things that might be useful:**
+
+- 🔭 **[Curious Tube](https://chromewebstore.google.com/detail/curioustube/ijmemoebckcpddgmlanbljlpjmjfgjpl)** — **Watch what you're curious about, not the algorithm's dictate.**

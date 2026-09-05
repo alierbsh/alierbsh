@@ -32,16 +32,28 @@ def build() -> str:
 
     parts = [header]
 
+    bio = str(data.get("bio", "")).strip()
+    if bio:
+        parts += ["", f"**{bio}**"]
+
     if projects:
-        parts += ["", data.get("intro", DEFAULT_INTRO), ""]
+        intro = str(data.get("intro", DEFAULT_INTRO)).strip()
+        parts += ["", f"**{intro}**", ""]
+
         for p in projects:
             name = str(p.get("name", "")).strip()
             if not name:
                 raise ValueError(f"Projenin 'name' alani bos: {p!r}")
+
             url = str(p.get("url", "")).strip()
             desc = str(p.get("description", "")).strip()
+            emoji = str(p.get("emoji", "")).strip()
+
             label = f"[{name}]({url})" if url else name
-            parts.append(f"- {label} — {desc}" if desc else f"- {label}")
+            line = f"- {emoji} **{label}**" if emoji else f"- **{label}**"
+            if desc:
+                line += f" — **{desc}**"
+            parts.append(line)
 
     return "\n".join(parts).rstrip("\n") + "\n"
 
