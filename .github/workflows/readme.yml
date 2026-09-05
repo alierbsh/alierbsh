@@ -1,0 +1,39 @@
+name: Build README
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "data/projects.json"
+      - "templates/header.md"
+      - "scripts/build_readme.py"
+      - ".github/workflows/readme.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: README uret
+        run: python3 scripts/build_readme.py
+
+      - name: Degisiklik varsa commitle
+        run: |
+          if [ -n "$(git status --porcelain README.md)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add README.md
+            git commit -m "chore: rebuild README from projects.json"
+            git push
+          else
+            echo "README zaten guncel, yapacak bir sey yok."
+          fi
