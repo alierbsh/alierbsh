@@ -4,3 +4,7 @@
 
 
 </div>
+
+Here are a few things that might be useful:
+
+- [Curious Tube](https://chromewebstore.google.com/detail/curioustube/ijmemoebckcpddgmlanbljlpjmjfgjpl) — Watch what you're curious about, not the algorithm's dictate.

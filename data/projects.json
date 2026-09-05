@@ -1,4 +1,10 @@
 {
   "intro": "Here are a few things that might be useful:",
-  "projects": []
+  "projects": [
+    {
+      "name": "Curious Tube",
+      "url": "https://chromewebstore.google.com/detail/curioustube/ijmemoebckcpddgmlanbljlpjmjfgjpl",
+      "description": "Watch what you're curious about, not the algorithm's dictate."
+    }
+  ]
 }
