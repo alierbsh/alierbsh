@@ -3,8 +3,7 @@
   "bio": [
     {
       "text": "Hi, i am Ali",
-      "level": 2,
-      "color": "#008F11"
+      "level": 2
     },
     {
       "text": "i basically try to build useful things",

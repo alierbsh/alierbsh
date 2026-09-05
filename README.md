@@ -5,7 +5,7 @@
 
 </div>
 
-<h2 align="center">$\color{#008F11}\textsf{Hi, i am Ali}$</h2>
+<h2 align="center">Hi, i am Ali</h2>
 <h3 align="center">i basically try to build useful things</h3>
 <h4 align="center">Computer Science Student</h4>
 

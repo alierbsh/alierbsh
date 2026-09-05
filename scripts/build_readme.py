@@ -41,12 +41,11 @@ def bio_lines(data: dict) -> list[str]:
             continue
         level = min(max(int(line.get("level", 3)), 1), 6)
 
-        # GitHub README'de CSS silindigi icin renk ancak LaTeX ile veriliyor.
-        # Matematik blogu icinde bulundugu basligin punto'sunu miras aliyor.
-        color = str(line.get("color", "")).strip()
-        body = f"$\\color{{{color}}}\\textsf{{{text}}}$" if color else text
-
-        out.append(f'<h{level} align="{align}">{body}</h{level}>')
+        # RENK KULLANMA. GitHub README'de CSS/style siliniyor; renk vermenin tek
+        # yolu LaTeX ($\\color{...}) ama GitHub mobil uygulamasi matematigi
+        # render etmiyor ve ham kaynagi ("$\\color{#008F11}...$") gosteriyor.
+        # Denendi, mobilde bozuldu, geri alindi. Duz metin birak.
+        out.append(f'<h{level} align="{align}">{text}</h{level}>')
     return out
 
 
