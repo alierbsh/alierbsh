@@ -40,7 +40,13 @@ def bio_lines(data: dict) -> list[str]:
         if not text:
             continue
         level = min(max(int(line.get("level", 3)), 1), 6)
-        out.append(f'<h{level} align="{align}">{text}</h{level}>')
+
+        # GitHub README'de CSS silindigi icin renk ancak LaTeX ile veriliyor.
+        # Matematik blogu icinde bulundugu basligin punto'sunu miras aliyor.
+        color = str(line.get("color", "")).strip()
+        body = f"$\\color{{{color}}}\\textsf{{{text}}}$" if color else text
+
+        out.append(f'<h{level} align="{align}">{body}</h{level}>')
     return out
 
 
