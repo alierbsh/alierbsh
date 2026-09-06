@@ -1,7 +1,6 @@
 
 <div align="center">
-  <img width="600" height="338" alt="deneme2" src="https://github.com/user-attachments/assets/5d343c14-cf98-4a9a-a1e1-20d87dc15a6b" />
-
+  <img width="600" height="338" alt="Matrix Code Live Wallpaper Free Live Wallpaper – Free Animated Desktop Background _ 67,000+ Free Live   Animated Wallpapers for PC - DesktopHut" src="https://github.com/user-attachments/assets/a601d2bc-7be2-4276-b404-0f110f1be04a" />
 
 </div>
 
