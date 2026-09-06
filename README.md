@@ -1,6 +1,6 @@
 
 <div align="center">
-           <img width="600" height="338" alt="Matrix Code Live Wallpaper Free Live Wallpaper – Free Animated Desktop Background _ 67,000+ Free Live   Animated Wallpapers for PC - DesktopHut_5" src="https://github.com/user-attachments/assets/42313907-0a1e-4ed3-8203-584dcdcc1e86" />
+<img width="400" height="225" alt="Sequence 02_4" src="https://github.com/user-attachments/assets/35e65a9b-63c8-4176-a1dc-a295eb885de3" />
 
 
 </div>
