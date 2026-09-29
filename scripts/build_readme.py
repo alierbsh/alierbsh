@@ -2,12 +2,10 @@
 """README.md uretici.
 
     templates/header.md  (GIF blogu - elle korunur, script asla degistirmez)
-  + data/projects.json   (tek degisen dosya: bio, projeler, "learning", "knowledge")
+  + data/projects.json   (tek degisen dosya)
   = README.md
-  + assets/currently-learning.svg  ("learning" listesinden: terminal karti)
-  + assets/cs-knowledge.svg        ("knowledge" blogundan: periyodik tablo karti)
 
-README.md ve SVG ELLE DUZENLENMEZ. Degisiklik icin data/projects.json'u guncelle,
+README.md ELLE DUZENLENMEZ. Degisiklik icin data/projects.json'u guncelle,
 sonra bu scripti calistir:  python3 scripts/build_readme.py
 """
 
@@ -18,15 +16,10 @@ import json
 import pathlib
 import sys
 
-import knowledge_svg
-import learning_svg
-
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 HEADER = ROOT / "templates" / "header.md"
 DATA = ROOT / "data" / "projects.json"
 OUTPUT = ROOT / "README.md"
-LEARNING_SVG = ROOT / "assets" / "currently-learning.svg"
-KNOWLEDGE_SVG = ROOT / "assets" / "cs-knowledge.svg"
 
 DEFAULT_INTRO = "Here are a few things that might be useful:"
 
@@ -56,31 +49,9 @@ def bio_lines(data: dict) -> list[str]:
     return out
 
 
-def _clean(items) -> list[str]:
-    return [str(x).strip() for x in (items or []) if str(x).strip()]
-
-
-def _attr(text: str) -> str:
-    return text.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;")
-
-
-def card_lines(svg: pathlib.Path, width: int, alt: str) -> list[str]:
-    """Ortalanmis SVG kart. alt metin: resim yuklenmezse / ekran okuyucuda icerik yine okunur."""
-    rel = svg.relative_to(ROOT).as_posix()
-    return ["", '<div align="center">',
-            f'<img src="{rel}" width="{width}" alt="{_attr(alt)}" />',
-            "</div>"]
-
-
-def build() -> dict[pathlib.Path, str | None]:
-    """Uretilecek dosyalar: {yol: icerik}. icerik None ise dosya silinir."""
+def build() -> str:
     header = HEADER.read_text(encoding="utf-8").rstrip("\n")
     data = json.loads(DATA.read_text(encoding="utf-8"))
-    learning = _clean(data.get("learning"))
-    kn = data.get("knowledge") or {}
-    kn_title = str(kn.get("title", "")).strip() or "Computer Science Knowledge"
-    kn_sub = str(kn.get("subtitle", "")).strip()
-    kn_items = knowledge_svg.normalize(kn.get("items"))
 
     projects = [p for p in data.get("projects", []) if not p.get("hidden")]
 
@@ -110,36 +81,7 @@ def build() -> dict[pathlib.Path, str | None]:
                 line += f" — **{desc}**"
             parts.append(line)
 
-    # Kartlar alt alta, hepsi ayni genislikte. Bos liste = kart yok (SVG de silinir).
-    widths = []
-    if learning:
-        widths.append(learning_svg.width(learning))
-    if kn_items:
-        widths.append(knowledge_svg.width(kn_title, kn_sub, kn_items))
-    w = max(widths, default=0)
-
-    cards = []
-    learning_svg_src = knowledge_svg_src = None
-    if learning:
-        learning_svg_src = learning_svg.render(learning, min_width=w)
-        cards.append(card_lines(LEARNING_SVG, w, "Currently learning: " + ", ".join(learning)))
-    if kn_items:
-        knowledge_svg_src = knowledge_svg.render(kn_title, kn_sub, kn_items, min_width=w)
-        alt = f"{kn_title}: {kn_sub} " + ", ".join(it["name"] for it in kn_items)
-        cards.append(card_lines(KNOWLEDGE_SVG, w, alt))
-
-    # bolumler arasina yatay cizgi (projeler | learning | knowledge)
-    for i, card in enumerate(cards):
-        if i > 0 or projects:
-            parts += ["", "---"]
-        parts += card
-
-    readme = "\n".join(parts).rstrip("\n") + "\n"
-    return {OUTPUT: readme, LEARNING_SVG: learning_svg_src, KNOWLEDGE_SVG: knowledge_svg_src}
-
-
-def current(path: pathlib.Path) -> str | None:
-    return path.read_text(encoding="utf-8") if path.exists() else None
+    return "\n".join(parts).rstrip("\n") + "\n"
 
 
 def main() -> int:
@@ -148,31 +90,22 @@ def main() -> int:
                     help="Yazma; README guncel degilse 1 don (CI icin)")
     args = ap.parse_args()
 
-    outputs = build()
-    stale = [p for p, new in outputs.items() if current(p) != new]
+    new = build()
+    old = OUTPUT.read_text(encoding="utf-8") if OUTPUT.exists() else None
 
     if args.check:
-        if stale:
-            names = ", ".join(p.relative_to(ROOT).as_posix() for p in stale)
-            print(f"Guncel degil: {names}. 'python3 scripts/build_readme.py' calistir.")
+        if new != old:
+            print("README.md guncel degil. 'python3 scripts/build_readme.py' calistir.")
             return 1
         print("README.md guncel.")
         return 0
 
-    if not stale:
+    if new == old:
         print("Degisiklik yok.")
         return 0
 
-    for path in stale:
-        new = outputs[path]
-        rel = path.relative_to(ROOT).as_posix()
-        if new is None:
-            path.unlink()
-            print(f"{rel} silindi.")
-        else:
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(new, encoding="utf-8")
-            print(f"{rel} yazildi ({len(new.splitlines())} satir).")
+    OUTPUT.write_text(new, encoding="utf-8")
+    print(f"README.md yazildi ({len(new.splitlines())} satir).")
     return 0
 
 
