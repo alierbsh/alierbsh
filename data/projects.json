@@ -22,5 +22,14 @@
       "url": "https://chromewebstore.google.com/detail/curioustube/ijmemoebckcpddgmlanbljlpjmjfgjpl",
       "description": "Watch what you're curious about, not the algorithm's dictate."
     }
+  ],
+  "learning": [
+    "Advanced C Programming",
+    "Advanced Data Structures",
+    "Mobile App Development with Java",
+    "Cloud Technologies",
+    "Scientific Tools and Computation",
+    "Signals and Systems",
+    "Distributed Systems"
   ]
 }
