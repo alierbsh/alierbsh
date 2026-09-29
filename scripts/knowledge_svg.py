@@ -1,180 +1,185 @@
-"""'Computer Science Knowledge' listesini kod editoru penceresi gorunumlu bir
-SVG'ye cevirir. Liste bir Python class'i gibi durur:
+"""'Computer Science Knowledge' listesini periyodik tablo gorunumlu bir SVG'ye cevirir.
 
-    class ComputerScienceKnowledge:          <- baslik (title)
-        \"\"\"I've really been racking ...\"\"\"   <- alt baslik (subtitle)
+Her konu bir element kutucugu: sol ustte sira numarasi, ortada iki harfli sembol
+(La, De, Dm...), altta konunun adi. Bos kutucuklar kesikli cerceve + "?" ile
+durur: tablo her zaman en az bir bos kutucuk birakir ve konu eklendikce satir
+satir buyur. Siradaki bos kutucuk hafifce nabiz atar ("sonraki buraya").
 
-        topics = [
-            "Linear Algebra",                <- maddeler (items)
-            ...
-        ]
+Madde ya duz string ("Linear Algebra") ya da sembolu elle vermek icin
+{"name": "Linear Algebra", "symbol": "La"}.
 
-Terminal kartiyla (learning_svg.py) ayni renk paleti ve pencere dili; ayni
-animasyon kurali: SVG'nin statik hali BITMIS hal, animasyon sadece giris.
+Terminal kartiyla (learning_svg.py) ayni palet; ayni animasyon kurali:
+SVG'nin statik hali BITMIS hal, animasyon sadece giris.
 """
 
 from __future__ import annotations
 
 import math
-import re
 from xml.sax.saxutils import escape
 
-from learning_svg import BG, BAR, BORDER, TEXT, MUTED, FONT_STACK
+from learning_svg import BG, BORDER, TEXT, MUTED, NUM_COLORS
 
-FONT = 13
-CW = 7.8               # tek karakter genisligi; her kod satiri bu genislige sabitlenir
-LH = 22
-TITLE_H = 40           # trafik isiklari + sekme
-STATUS_H = 24
-PAD_TOP = 16
-NUM_RIGHT = 36         # satir numaralarinin sag kenari
-CODE_X = 54            # kodun basladigi x
-PAD_RIGHT = 28
+SANS = ('-apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, &quot;Noto Sans&quot;, '
+        'Helvetica, Arial, sans-serif')
 
-GUTTER = "#6e7681"
-ACTIVE_BG = "#6e76811f"
-TAB_ACCENT = "#f78166"
+COLS = 5
+TILE_W, TILE_H, GAP = 90, 106, 10
+PAD_X = 30
+GRID_TOP = 94
+PAD_BOTTOM = 30
+NAME_FONT = 11
+NAME_MAX = 13          # bir satira sigan karakter (kutucuk adi)
 
-# GitHub Dark syntax renkleri
-KW = "#ff7b72"         # class
-CLS = "#d2a8ff"        # class adi
-STR = "#a5d6ff"        # string / docstring
-VAR = "#ffa657"        # topics
-OP = "#ff7b72"         # =
-BRK = "#f2cc60"        # [ ]  (bracket pair renklendirme)
+EMPTY = "#30363d"
+EMPTY_NUM = "#484f58"
+NEXT = "#6e7681"
 
-INDENT = 4
+SKIP_WORDS = {"and", "with", "of", "the", "for", "in", "to", "a", "an"}
 
 # zamanlama (saniye)
-LINE_START = 0.35
-LINE_GAP = 0.09
+POP_START = 0.35
+POP_GAP = 0.16
 
 
-def _words(title: str) -> list[str]:
-    return [w for w in re.split(r"[^0-9A-Za-z]+", title) if w]
+def normalize(items) -> list[dict]:
+    out = []
+    for it in items or []:
+        if isinstance(it, dict):
+            name = str(it.get("name", "")).strip()
+            sym = str(it.get("symbol", "")).strip()
+        else:
+            name, sym = str(it).strip(), ""
+        if name:
+            out.append({"name": name, "symbol": sym})
+    return out
 
 
-def class_name(title: str) -> str:
-    return "".join(w[:1].upper() + w[1:] for w in _words(title)) or "Knowledge"
+def _symbols(items: list[dict]) -> list[str]:
+    """Iki harfli, cakismayan semboller. Elle verilen sembol her zaman kazanir."""
+    used = {it["symbol"] for it in items if it["symbol"]}
+    out = []
+    for it in items:
+        if it["symbol"]:
+            out.append(it["symbol"])
+            continue
+        words = [w for w in it["name"].replace("-", " ").split() if w[:1].isalpha()]
+        main = [w for w in words if w.lower() not in SKIP_WORDS] or words
+        first = main[0]
+        cands = []
+        if len(main) >= 2:
+            cands.append(first[0].upper() + main[1][0].lower())
+        cands += [first[0].upper() + ch.lower() for ch in first[1:] if ch.isalpha()]
+        for w in main[1:]:
+            cands += [first[0].upper() + ch.lower() for ch in w if ch.isalpha()]
+        sym = next((c for c in cands if c not in used), first[:2].title())
+        used.add(sym)
+        out.append(sym)
+    return out
 
 
-def file_name(title: str) -> str:
-    return "_".join(w.lower() for w in _words(title)) + ".py" if _words(title) else "knowledge.py"
+def _wrap(name: str) -> list[str]:
+    lines, cur = [], ""
+    for w in name.split():
+        if cur and len(cur) + 1 + len(w) > NAME_MAX:
+            lines.append(cur)
+            cur = w
+        else:
+            cur = f"{cur} {w}".strip()
+    if cur:
+        lines.append(cur)
+    return lines[:3]
 
 
-def _lines(title: str, subtitle: str, items: list[str]):
-    """Her satir: (girinti, [(metin, renk, kalin_mi), ...])"""
-    lines = [(0, [("class ", KW, False), (class_name(title), CLS, True), (":", TEXT, False)])]
-    if subtitle:
-        lines.append((INDENT, [(f'"""{subtitle}"""', STR, False)]))
-    lines.append((0, []))
-    lines.append((INDENT, [("topics", VAR, False), (" = ", OP, False), ("[", BRK, True)]))
-    for item in items:
-        lines.append((2 * INDENT, [(f'"{item}"', STR, False), (",", TEXT, False)]))
-    lines.append((INDENT, [("]", BRK, True)]))
-    return lines
+def _slots(n: int) -> int:
+    # en az iki satir, her zaman en az bir bos kutucuk
+    return max(2 * COLS, math.ceil((n + 1) / COLS) * COLS)
 
 
-def _line_len(line) -> int:
-    indent, toks = line
-    return indent + sum(len(t) for t, _, _ in toks)
+def width(title: str, subtitle: str, items) -> int:
+    return 2 * PAD_X + COLS * TILE_W + (COLS - 1) * GAP
 
 
-def width(title: str, subtitle: str, items: list[str]) -> int:
-    longest = max(_line_len(l) for l in _lines(title, subtitle, items))
-    return math.ceil(CODE_X + longest * CW + PAD_RIGHT)
-
-
-def render(title: str, subtitle: str, items: list[str], min_width: int = 0) -> str:
-    lines = _lines(title, subtitle, items)
+def render(title: str, subtitle: str, items, min_width: int = 0) -> str:
+    items = normalize(items)
+    syms = _symbols(items)
+    n = len(items)
+    slots = _slots(n)
+    rows = slots // COLS
     W = max(width(title, subtitle, items), min_width)
-    n = len(lines)
-    H = TITLE_H + PAD_TOP + n * LH + 12 + STATUS_H
+    H = GRID_TOP + rows * TILE_H + (rows - 1) * GAP + PAD_BOTTOM
+    x0 = (W - (COLS * TILE_W + (COLS - 1) * GAP)) / 2
+    done_at = POP_START + n * POP_GAP + 0.3
 
-    active = n - 2                      # son madde: bir sonraki buraya eklenecek
-    active_len = _line_len(lines[active])
-    end_at = LINE_START + n * LINE_GAP + 0.1
-
-    alt = f"{title}: {subtitle} " + ", ".join(items)
+    alt = f"{title}: {subtitle} " + ", ".join(it["name"] for it in items)
 
     s: list[str] = []
     a = s.append
     a(f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" '
       f'viewBox="0 0 {W} {H}" role="img" aria-labelledby="t">')
     a(f'<title id="t">{escape(alt)}</title>')
+    a('<defs>')
+    a('<filter id="glow" x="-30%" y="-30%" width="160%" height="160%">'
+      '<feGaussianBlur stdDeviation="7"/></filter>')
+    a('</defs>')
     a('<style>')
-    a(f'text{{font-family:{FONT_STACK};font-size:{FONT}px}}')
-    a('.ui{font-size:11.5px}')
+    a(f'text{{font-family:{SANS}}}')
     a('@keyframes in{from{opacity:0}to{opacity:1}}')
-    a('@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}')
-    a('.ln{animation:in .25s ease-out both}')
-    a('.hl{animation:in .2s linear %.2fs both}' % end_at)
-    a('.cur{animation:in .01s linear %.2fs both,blink 1.1s step-end %.2fs infinite}'
-      % (end_at, end_at + 0.4))
+    a('@keyframes pop{0%{opacity:0;transform:scale(.6)}60%{opacity:1;transform:scale(1.06)}'
+      '100%{opacity:1;transform:scale(1)}}')
+    a('@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}')
+    a('.tile{transform-box:fill-box;transform-origin:center;animation:pop .45s ease-out both}')
+    a('.empty{animation:in .4s ease-out .1s both}')
+    a(f'.next{{animation:in .4s ease-out .1s both,pulse 2s ease-in-out {done_at:.2f}s infinite}}')
     a('@media (prefers-reduced-motion:reduce){*{animation:none!important}}')
     a('</style>')
 
-    # pencere
     a(f'<rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" rx="10" fill="{BG}" stroke="{BORDER}"/>')
-    a(f'<path d="M0.5 {TITLE_H} V10.5 a10 10 0 0 1 10 -10 H{W - 10.5} a10 10 0 0 1 10 10 V{TITLE_H} Z" '
-      f'fill="{BAR}"/>')
-    for i, c in enumerate(["#ff5f57", "#febc2e", "#28c840"]):
-        a(f'<circle cx="{20 + i * 20}" cy="{TITLE_H / 2}" r="6" fill="{c}"/>')
+    a(f'<text x="{W / 2}" y="46" font-size="21" font-weight="700" fill="{TEXT}" '
+      f'text-anchor="middle">{escape(title)}</text>')
+    if subtitle:
+        a(f'<text x="{W / 2}" y="71" font-size="14" font-style="italic" fill="{MUTED}" '
+          f'text-anchor="middle">{escape(subtitle)}</text>')
 
-    # sekme: editor zeminine bagli, ustunde turuncu vurgu
-    fname = file_name(title)
-    tab_x, tab_y = 86, 8
-    tab_w = math.ceil(28 + len(fname) * 6.9 + 30)
-    a(f'<path d="M{tab_x} {TITLE_H} V{tab_y + 6} a6 6 0 0 1 6 -6 H{tab_x + tab_w - 6} '
-      f'a6 6 0 0 1 6 6 V{TITLE_H} Z" fill="{BG}"/>')
-    a(f'<path d="M{tab_x + 1} {tab_y + 3} a6 6 0 0 1 5 -3 H{tab_x + tab_w - 6} a6 6 0 0 1 5 3" '
-      f'fill="none" stroke="{TAB_ACCENT}" stroke-width="2"/>')
-    a(f'<line x1="0.5" y1="{TITLE_H}" x2="{tab_x}" y2="{TITLE_H}" stroke="{BORDER}"/>')
-    a(f'<line x1="{tab_x + tab_w}" y1="{TITLE_H}" x2="{W - 0.5}" y2="{TITLE_H}" stroke="{BORDER}"/>')
-    a(f'<line x1="{tab_x}" y1="{tab_y + 6}" x2="{tab_x}" y2="{TITLE_H}" stroke="{BORDER}"/>')
-    a(f'<line x1="{tab_x + tab_w}" y1="{tab_y + 6}" x2="{tab_x + tab_w}" y2="{TITLE_H}" stroke="{BORDER}"/>')
-    icy = tab_y + (TITLE_H - tab_y) / 2
-    a(f'<circle cx="{tab_x + 14}" cy="{icy - 2}" r="4" fill="#3572a5"/>')
-    a(f'<circle cx="{tab_x + 18}" cy="{icy + 2}" r="4" fill="#ffd43b"/>')
-    a(f'<text class="ui" x="{tab_x + 30}" y="{icy + 4}" fill="{TEXT}">{escape(fname)}</text>')
-    a(f'<text class="ui" x="{tab_x + tab_w - 14}" y="{icy + 4}" fill="{MUTED}" '
-      f'text-anchor="middle">&#215;</text>')
+    for k in range(slots):
+        r, c = divmod(k, COLS)
+        x = x0 + c * (TILE_W + GAP)
+        y = GRID_TOP + r * (TILE_H + GAP)
+        cx = x + TILE_W / 2
 
-    # aktif satir vurgusu
-    top = TITLE_H + PAD_TOP
-    ay = top + active * LH
-    a(f'<rect class="hl" x="1" y="{ay}" width="{W - 2}" height="{LH}" fill="{ACTIVE_BG}"/>')
+        if k >= n:
+            cls = "next" if k == n else "empty"
+            stroke = NEXT if k == n else EMPTY
+            a(f'<g class="{cls}">')
+            a(f'<rect x="{x}" y="{y}" width="{TILE_W}" height="{TILE_H}" rx="8" fill="none" '
+              f'stroke="{stroke}" stroke-dasharray="4 4"/>')
+            a(f'<text x="{x + 9}" y="{y + 18}" font-size="11" fill="{EMPTY_NUM}">{k + 1}</text>')
+            a(f'<text x="{cx}" y="{y + 60}" font-size="28" font-weight="700" fill="{stroke}" '
+              f'text-anchor="middle">?</text>')
+            a('</g>')
+            continue
 
-    # kod satirlari
-    for i, line in enumerate(lines):
-        indent, toks = line
-        base = top + i * LH + LH / 2 + FONT * 0.36
-        num_c = TEXT if i == active else GUTTER
-        a(f'<g class="ln" style="animation-delay:{LINE_START + i * LINE_GAP:.2f}s">')
-        a(f'<text x="{NUM_RIGHT}" y="{base:.1f}" fill="{num_c}" text-anchor="end">{i + 1}</text>')
-        if toks:
-            chars = sum(len(t) for t, _, _ in toks)
-            bold = ' font-weight="700"'
-            spans = "".join(
-                f'<tspan fill="{c}"{bold if b else ""}>{escape(t)}</tspan>' for t, c, b in toks)
-            a(f'<text x="{CODE_X + indent * CW:.1f}" y="{base:.1f}" textLength="{chars * CW:.1f}" '
-              f'lengthAdjust="spacing" xml:space="preserve">{spans}</text>')
+        it, sym = items[k], syms[k]
+        col = NUM_COLORS[k % len(NUM_COLORS)]
+        lines = _wrap(it["name"])
+        sym_y = y + (58 if len(lines) <= 2 else 50)
+
+        a(f'<g class="tile" style="animation-delay:{POP_START + k * POP_GAP:.2f}s">')
+        a(f'<rect x="{x + 6}" y="{y + 10}" width="{TILE_W - 12}" height="{TILE_H - 12}" rx="10" '
+          f'fill="{col}" opacity=".22" filter="url(#glow)"/>')
+        a(f'<rect x="{x}" y="{y}" width="{TILE_W}" height="{TILE_H}" rx="8" fill="{BG}"/>')
+        a(f'<rect x="{x}" y="{y}" width="{TILE_W}" height="{TILE_H}" rx="8" fill="{col}" '
+          f'fill-opacity=".12" stroke="{col}" stroke-width="1.5"/>')
+        a(f'<text x="{x + 9}" y="{y + 18}" font-size="11" font-weight="700" fill="{col}">{k + 1}</text>')
+        a(f'<text x="{cx}" y="{sym_y}" font-size="34" font-weight="700" fill="{TEXT}" '
+          f'text-anchor="middle">{escape(sym)}</text>')
+        for j, ln in enumerate(lines):
+            ly = y + TILE_H - 11 - (len(lines) - 1 - j) * 12.5
+            fit = ''
+            if len(ln) > NAME_MAX:
+                fit = f' textLength="{TILE_W - 12}" lengthAdjust="spacingAndGlyphs"'
+            a(f'<text x="{cx}" y="{ly}" font-size="{NAME_FONT}" fill="#c9d1d9" '
+              f'text-anchor="middle"{fit}>{escape(ln)}</text>')
         a('</g>')
-
-    # imlec: son maddenin sonunda, yeni madde bekliyor
-    cy = top + active * LH + 3
-    a(f'<rect class="cur" x="{CODE_X + active_len * CW + 1:.1f}" y="{cy}" width="2" '
-      f'height="{LH - 6}" fill="{TEXT}"/>')
-
-    # durum cubugu
-    sy = H - STATUS_H
-    a(f'<path d="M0.5 {sy} H{W - 0.5} V{H - 10.5} a10 10 0 0 1 -10 10 H10.5 a10 10 0 0 1 -10 -10 Z" '
-      f'fill="{BAR}"/>')
-    a(f'<line x1="0.5" y1="{sy}" x2="{W - 0.5}" y2="{sy}" stroke="{BORDER}"/>')
-    a(f'<circle cx="18" cy="{sy + STATUS_H / 2}" r="3.5" fill="#3fb950"/>')
-    a(f'<text class="ui" x="28" y="{sy + STATUS_H / 2 + 4}" fill="{MUTED}">main</text>')
-    a(f'<text class="ui" x="{W - 16}" y="{sy + STATUS_H / 2 + 4}" fill="{MUTED}" text-anchor="end" '
-      f'xml:space="preserve">Ln {active + 1}, Col {active_len + 1}   Python   UTF-8</text>')
 
     a('</svg>')
     return "\n".join(s) + "\n"

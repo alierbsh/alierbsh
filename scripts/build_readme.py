@@ -5,7 +5,7 @@
   + data/projects.json   (tek degisen dosya: bio, projeler, "learning", "knowledge")
   = README.md
   + assets/currently-learning.svg  ("learning" listesinden: terminal karti)
-  + assets/cs-knowledge.svg        ("knowledge" blogundan: kod editoru karti)
+  + assets/cs-knowledge.svg        ("knowledge" blogundan: periyodik tablo karti)
 
 README.md ve SVG ELLE DUZENLENMEZ. Degisiklik icin data/projects.json'u guncelle,
 sonra bu scripti calistir:  python3 scripts/build_readme.py
@@ -80,7 +80,7 @@ def build() -> dict[pathlib.Path, str | None]:
     kn = data.get("knowledge") or {}
     kn_title = str(kn.get("title", "")).strip() or "Computer Science Knowledge"
     kn_sub = str(kn.get("subtitle", "")).strip()
-    kn_items = _clean(kn.get("items"))
+    kn_items = knowledge_svg.normalize(kn.get("items"))
 
     projects = [p for p in data.get("projects", []) if not p.get("hidden")]
 
@@ -125,7 +125,7 @@ def build() -> dict[pathlib.Path, str | None]:
         cards.append(card_lines(LEARNING_SVG, w, "Currently learning: " + ", ".join(learning)))
     if kn_items:
         knowledge_svg_src = knowledge_svg.render(kn_title, kn_sub, kn_items, min_width=w)
-        alt = f"{kn_title}: {kn_sub} " + ", ".join(kn_items)
+        alt = f"{kn_title}: {kn_sub} " + ", ".join(it["name"] for it in kn_items)
         cards.append(card_lines(KNOWLEDGE_SVG, w, alt))
 
     # bolumler arasina yatay cizgi (projeler | learning | knowledge)
