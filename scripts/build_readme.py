@@ -103,6 +103,9 @@ def build() -> dict[pathlib.Path, str | None]:
                 line += f" — **{desc}**"
             parts.append(line)
 
+    # projelerle "Currently learning" karti arasina yatay cizgi
+    if projects and learning:
+        parts += ["", "---"]
     parts += learning_lines(learning)
 
     readme = "\n".join(parts).rstrip("\n") + "\n"

@@ -13,6 +13,8 @@
 
 - 🔭 **[Curious Tube](https://chromewebstore.google.com/detail/curioustube/ijmemoebckcpddgmlanbljlpjmjfgjpl)** — **Watch what you're curious about, not the algorithm's dictate.**
 
+---
+
 <div align="center">
 <img src="assets/currently-learning.svg" width="480" alt="Currently learning: Advanced C Programming, Advanced Data Structures, Mobile App Development with Java, Cloud Technologies, Scientific Tools and Computation, Signals and Systems, Distributed Systems" />
 </div>
