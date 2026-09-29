@@ -2,8 +2,10 @@
 """README.md uretici.
 
     templates/header.md  (GIF blogu - elle korunur, script asla degistirmez)
-  + data/projects.json   (tek degisen dosya: bio, projeler, "learning" listesi)
-  = README.md  +  assets/currently-learning.svg  ("learning" listesinden cizilir)
+  + data/projects.json   (tek degisen dosya: bio, projeler, "learning", "knowledge")
+  = README.md
+  + assets/currently-learning.svg  ("learning" listesinden: terminal karti)
+  + assets/cs-knowledge.svg        ("knowledge" blogundan: kod editoru karti)
 
 README.md ve SVG ELLE DUZENLENMEZ. Degisiklik icin data/projects.json'u guncelle,
 sonra bu scripti calistir:  python3 scripts/build_readme.py
@@ -16,13 +18,15 @@ import json
 import pathlib
 import sys
 
-from learning_svg import render as render_learning_svg, width as learning_svg_width
+import knowledge_svg
+import learning_svg
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 HEADER = ROOT / "templates" / "header.md"
 DATA = ROOT / "data" / "projects.json"
 OUTPUT = ROOT / "README.md"
 LEARNING_SVG = ROOT / "assets" / "currently-learning.svg"
+KNOWLEDGE_SVG = ROOT / "assets" / "cs-knowledge.svg"
 
 DEFAULT_INTRO = "Here are a few things that might be useful:"
 
@@ -52,20 +56,19 @@ def bio_lines(data: dict) -> list[str]:
     return out
 
 
-def learning_items(data: dict) -> list[str]:
-    return [str(x).strip() for x in data.get("learning", []) if str(x).strip()]
+def _clean(items) -> list[str]:
+    return [str(x).strip() for x in (items or []) if str(x).strip()]
 
 
-def learning_lines(items: list[str]) -> list[str]:
-    """'Currently learning' blogu: terminal gorunumlu SVG. Liste bossa hic basilmaz."""
-    if not items:
-        return []
-    rel = LEARNING_SVG.relative_to(ROOT).as_posix()
-    # alt metin: resim yuklenmezse / ekran okuyucuda liste yine okunur
-    alt = "Currently learning: " + ", ".join(items)
-    alt = alt.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;")
+def _attr(text: str) -> str:
+    return text.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;")
+
+
+def card_lines(svg: pathlib.Path, width: int, alt: str) -> list[str]:
+    """Ortalanmis SVG kart. alt metin: resim yuklenmezse / ekran okuyucuda icerik yine okunur."""
+    rel = svg.relative_to(ROOT).as_posix()
     return ["", '<div align="center">',
-            f'<img src="{rel}" width="{learning_svg_width(items)}" alt="{alt}" />',
+            f'<img src="{rel}" width="{width}" alt="{_attr(alt)}" />',
             "</div>"]
 
 
@@ -73,7 +76,11 @@ def build() -> dict[pathlib.Path, str | None]:
     """Uretilecek dosyalar: {yol: icerik}. icerik None ise dosya silinir."""
     header = HEADER.read_text(encoding="utf-8").rstrip("\n")
     data = json.loads(DATA.read_text(encoding="utf-8"))
-    learning = learning_items(data)
+    learning = _clean(data.get("learning"))
+    kn = data.get("knowledge") or {}
+    kn_title = str(kn.get("title", "")).strip() or "Computer Science Knowledge"
+    kn_sub = str(kn.get("subtitle", "")).strip()
+    kn_items = _clean(kn.get("items"))
 
     projects = [p for p in data.get("projects", []) if not p.get("hidden")]
 
@@ -103,14 +110,32 @@ def build() -> dict[pathlib.Path, str | None]:
                 line += f" — **{desc}**"
             parts.append(line)
 
-    # projelerle "Currently learning" karti arasina yatay cizgi
-    if projects and learning:
-        parts += ["", "---"]
-    parts += learning_lines(learning)
+    # Kartlar alt alta, hepsi ayni genislikte. Bos liste = kart yok (SVG de silinir).
+    widths = []
+    if learning:
+        widths.append(learning_svg.width(learning))
+    if kn_items:
+        widths.append(knowledge_svg.width(kn_title, kn_sub, kn_items))
+    w = max(widths, default=0)
+
+    cards = []
+    learning_svg_src = knowledge_svg_src = None
+    if learning:
+        learning_svg_src = learning_svg.render(learning, min_width=w)
+        cards.append(card_lines(LEARNING_SVG, w, "Currently learning: " + ", ".join(learning)))
+    if kn_items:
+        knowledge_svg_src = knowledge_svg.render(kn_title, kn_sub, kn_items, min_width=w)
+        alt = f"{kn_title}: {kn_sub} " + ", ".join(kn_items)
+        cards.append(card_lines(KNOWLEDGE_SVG, w, alt))
+
+    # bolumler arasina yatay cizgi (projeler | learning | knowledge)
+    for i, card in enumerate(cards):
+        if i > 0 or projects:
+            parts += ["", "---"]
+        parts += card
 
     readme = "\n".join(parts).rstrip("\n") + "\n"
-    svg = render_learning_svg(learning) if learning else None
-    return {OUTPUT: readme, LEARNING_SVG: svg}
+    return {OUTPUT: readme, LEARNING_SVG: learning_svg_src, KNOWLEDGE_SVG: knowledge_svg_src}
 
 
 def current(path: pathlib.Path) -> str | None:

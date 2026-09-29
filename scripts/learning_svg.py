@@ -56,9 +56,10 @@ def width(items: list[str]) -> int:
     return max(MIN_W, math.ceil(2 * PAD_X + longest * CW + 48))
 
 
-def render(items: list[str]) -> str:
+def render(items: list[str], min_width: int = 0) -> str:
+    """min_width: README'de alt alta duran kartlar ayni genislikte olsun diye."""
     n = len(items)
-    W = width(items)
+    W = max(width(items), min_width)
     type_end = TYPE_START + len(COMMAND) * TYPE_STEP
     out_start = type_end + 0.25
     final_at = out_start + n * LINE_GAP + 0.15

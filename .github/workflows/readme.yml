@@ -8,6 +8,7 @@ on:
       - "templates/header.md"
       - "scripts/build_readme.py"
       - "scripts/learning_svg.py"
+      - "scripts/knowledge_svg.py"
       - ".github/workflows/readme.yml"
   workflow_dispatch:
 

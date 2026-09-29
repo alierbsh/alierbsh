@@ -31,5 +31,14 @@
     "Scientific Tools and Computation",
     "Signals and Systems",
     "Distributed Systems"
-  ]
+  ],
+  "knowledge": {
+    "title": "Computer Science Knowledge",
+    "subtitle": "I’ve really been racking my brain over this stuff:",
+    "items": [
+      "Linear Algebra",
+      "Differential Equations",
+      "Discrete Mathematics"
+    ]
+  }
 }
