@@ -25,7 +25,10 @@ DEFAULT_INTRO = "Here are a few things that might be useful:"
 
 
 def bio_lines(data: dict) -> list[str]:
-    """Tanitim blogu: ortalanmis basliklar. level 2 = en iri, 4 = govde boyu."""
+    """Tanitim blogu: ortalanmis basliklar. level 2 = en iri, 4 = govde boyu.
+
+    Satirda "url" varsa metin o adrese link olur (orn. "resume" -> kisisel site).
+    """
     bio = data.get("bio")
     if isinstance(bio, str):
         bio = [{"text": bio, "level": 3}] if bio.strip() else []
@@ -40,6 +43,9 @@ def bio_lines(data: dict) -> list[str]:
         if not text:
             continue
         level = min(max(int(line.get("level", 3)), 1), 6)
+        url = str(line.get("url", "")).strip()
+        if url:
+            text = f'<a href="{url}">{text}</a>'
 
         # RENK KULLANMA. GitHub README'de CSS/style siliniyor; renk vermenin tek
         # yolu LaTeX ($\\color{...}) ama GitHub mobil uygulamasi matematigi

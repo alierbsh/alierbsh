@@ -2,11 +2,8 @@
   "bio_align": "center",
   "bio": [
     {
-      "text": "Hi, i am Ali",
-      "level": 2
-    },
-    {
-      "text": "i basically try to build useful things",
+      "text": "resume",
+      "url": "https://personal-site-arbash.vercel.app",
       "level": 3
     }
   ],
@@ -16,7 +13,8 @@
       "emoji": "🔭",
       "name": "Curious Tube",
       "url": "https://chromewebstore.google.com/detail/curioustube/ijmemoebckcpddgmlanbljlpjmjfgjpl",
-      "description": "Watch what you're curious about, not the algorithm's dictate."
+      "description": "Watch what you're curious about, not the algorithm's dictate.",
+      "hidden": true
     }
   ]
 }

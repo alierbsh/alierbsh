@@ -5,9 +5,4 @@
 
 </div>
 
-<h2 align="center">Hi, i am Ali</h2>
-<h3 align="center">i basically try to build useful things</h3>
-
-**Here are a few things I've built that might be useful:**
-
-- 🔭 **[Curious Tube](https://chromewebstore.google.com/detail/curioustube/ijmemoebckcpddgmlanbljlpjmjfgjpl)** — **Watch what you're curious about, not the algorithm's dictate.**
+<h3 align="center"><a href="https://personal-site-arbash.vercel.app">resume</a></h3>
