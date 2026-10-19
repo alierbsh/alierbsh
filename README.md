@@ -5,4 +5,4 @@
 
 </div>
 
-<h3 align="center"><a href="https://personal-site-arbash.vercel.app">resume</a></h3>
+<h3 align="center"><a href="https://alierbash.com">resume</a></h3>
